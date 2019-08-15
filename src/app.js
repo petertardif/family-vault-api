@@ -16,6 +16,10 @@ app.get('/', (req,res) => {
   res.send('Hello, Ms. World!')
 });
 
+app.get('/api/*', (req, res) => {
+  res.json({ok: true})
+})
+
 app.use(function errorHandler(error, req, res, next) {
   let response;
   if (NODE_ENV === 'production') {
