@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
+const memoriesRouter = require('./memories/memories-router');
+const familyMembersRouter = require('./family-members/family-members-router');
 
 const app = express();
 const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
@@ -16,16 +18,15 @@ app.get('/', (req,res) => {
   res.send('Hello, Ms. World!')
 });
 
-app.get('/api/*', (req, res) => {
-  res.json({ok: true});
-});
+app.use('/api/family-members', familyMembersRouter);
+app.use('/api/memories', memoriesRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
   if (NODE_ENV === 'production') {
     response = {error: { message: 'server error' } }
   } else {
-    response = { error }
+    response = { message: error.message, error }
   }
   res.status(500).json(response);
 });

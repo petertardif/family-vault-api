@@ -5,20 +5,21 @@ const MemoriesJson = express.json();
 const MemoriesRouter = express.Router();
 const MemoriesService = require('./memories-service');
 
-const serailizeMemory = memory => ({
+const serializeMemory = memory => ({
   id: memory.id,
   memory_title: xss(memory.memory_title),
   memory_date: memory.memory_date,
   memory_desc: xss(memory.memory_desc),
   media_url: memory.media_url,
   familymember_id: memory.familymember_id,
+  date_updated: memory.date_updated
 })
 
 MemoriesRouter
   .route('/')
   .get((req, res, next) => {
     const knexInstance = req.app.get('db');
-    MemoresService.getAllMemories(knexInstance)
+    MemoriesService.getAllMemories(knexInstance)
       .then(memories => {
         res.json(memories);
       })
@@ -38,11 +39,11 @@ MemoriesRouter
     }
     
     MemoriesService.insertMemories(req.app.get('db'), newMemory)
-      .then(note => {
+      .then(memory => {
         res
         .status(201)
-        .location(path.posix.join(req.originalUrl, `/${note.id}`))
-        .json(serializeNote(note))
+        .location(path.posix.join(req.originalUrl, `/${memory.id}`))
+        .json(serializeMemory(memory))
       })
       .catch(next)
   })
@@ -50,53 +51,53 @@ MemoriesRouter
 MemoriesRouter
   .route('/:memory_id')
   .all((req, res, next) => {
-    const { note_id } = req.params
-    NotesService.getById(
+    const { memory_id } = req.params
+    MemoriesService.getById(
       req.app.get('db'),
-      note_id
+      memory_id
     )
-      .then(note => {
-        if (!note) {
-          // logger.error(`Note with id ${note_id} not found.`)
+      .then(memory => {
+        if (!memory) {
+          // logger.error(`Memory with id ${memory_id} not found.`)
           return res.status(404).json({
-            error: { message: `Note does not exist`}
+            error: { message: `Memory does not exist`}
           })
         }
-        res.note = note
+        res.memory = memory
         next()
       })
       .catch(next)
   })
   .get((req, res) => {
-    res.json(serializeNote(res.note))
+    res.json(serializeMemory(res.memory))
   })
   .delete((req, res, next) => {
-    const { note_id } = req.params
-    NotesService.deleteNotes(
+    const { memory_id } = req.params
+    MemoriesService.deleteMemories(
       req.app.get('db'),
-      note_id
+      memory_id
     )
       .then(() => {
-        // logger.info(`Note with id ${note_id} deleted.`)
+        // logger.info(`Memory with id ${memory_id} deleted.`)
         res.status(204).end()
       })
       .catch(next)
   })
-  .patch(NotesJson, (req, res, next) => {
-    const { note_title, content } = req.body;
-    const noteToUpdate = { note_title, content }
+  .patch(MemoriesJson, (req, res, next) => {
+    const { memory_title, memory_date, memory_desc, media_url, familymember_id } = req.body;
+    const memoryToUpdate = { memory_title, memory_date, memory_desc, media_url, familymember_id }
     
-    const numberOfValues = Object.values(noteToUpdate).filter(Boolean).length
+    const numberOfValues = Object.values(memoryToUpdate).filter(Boolean).length
     if (numberOfValues === 0) {
       return res.status(400).json({
-        error: { message: `Request body must contain either 'note_title' or 'content'`}
+        error: { message: `Request body must contain 'title', 'date', 'description', 'URL', or 'family member'.`}
       })
     }
 
-    NotesService.updateNotes(
+    MemoriesService.updateMemories(
       req.app.get('db'),
-      req.params.note_id,
-      noteToUpdate
+      req.params.memory_id,
+      memoryToUpdate
     )
       .then(() => {
         res.status(204).end()
