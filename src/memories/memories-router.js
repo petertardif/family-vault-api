@@ -26,8 +26,8 @@ MemoriesRouter
       .catch(next)
   })
   .post(MemoriesJson, (req, res, next) => {
-    const { id, memory_title, memory_date, memory_desc, media_url, familymember_id } = req.body;
-    const newMemory = { id, memory_title, memory_date, memory_desc, media_url, familymember_id };
+    const { memory_title, memory_date, memory_desc, media_url, familymember_id } = req.body;
+    const newMemory = { memory_title, memory_date, memory_desc, media_url, familymember_id };
 
     for (const [key, value] of Object.entries(newMemory)) {
       if (value == null) {
