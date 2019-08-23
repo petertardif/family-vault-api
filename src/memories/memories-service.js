@@ -1,7 +1,7 @@
 
 const MemoriesService = {
   getAllMemories(knex) {
-    return knex.select('*').from('memories').orderBy('memory_date')
+    return knex.select('*').from('memories').orderBy('memory_date', 'desc')
   },
   insertMemories(knex,newMemory) {
     return knex
