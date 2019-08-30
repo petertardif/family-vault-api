@@ -1,26 +1,51 @@
-# Express Boilerplate!
+# Family Vault
 
-This boilerplate will be used to start new Express projects.
+My wife and I love our children. So many things they do are very precious and dear to our hearts.  We often find ourselves saying, “we have to write this down.” We wanted a way to easily capture these moments where a picture or image would not be able to tell the full story.
 
-## Set up
+## So
 
-Complete to start a new project:
+When you fail to capture the picture or video and cannot recreate the moment...Vault it!
 
-1. Clone this repository to your local machine `git clone https://github.com/petertardif/express-boilerplate.git`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+This app helps capture memories by “Naming it,” “Describing it,” and “Capturing it”! Forever capture your family's precious moments through thoughts, letters, audio, images, and videos.
 
-## Scripts
+![landing page](screenshots/landingpage.png)
+![user landing page](screenshots/user-landing-page.png)
+![add a memory](screenshots/add-a-memory.png)
+![view a memory](screenshots/memory-page.png)
+![memory list](screenshots/memory-list.png)
 
-Start the application `npm start`
 
-Start nodemon for the application `npm run dev`
+## See it live! 
 
-Run the tests `npm test`
+* [Live](https://family-vault.petertardif.now.sh/)
+* [API Repo](https://github.com/petertardif/family-vault-api)
 
-## Deploying
+## Process
+1. [User Stories, User Flows, Wireframes](https://docs.google.com/spreadsheets/d/1jFYYlrqykvHg_c2WdfyFHgDGYFy5_mFHzdWDL70umXk/edit#gid=0)
+2. [Trello Board](https://trello.com/b/6haebPyh/family-vault)
+3. [Feedback Form](https://forms.gle/MH7nSswBtdtVNDsg8)
+4. [Presentation Slide Deck](https://docs.google.com/presentation/d/1raNObaBoo4JI54qna1jIhd0JXTsZXaJ-8_G5vSYjVwA/edit?usp=sharing)
+5. [App Presentation](https://youtu.be/AkDsCauXJgs)
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+## API Endpoints
+Base URL - https://agile-fortress-94521.herokuapp.com/
+
+#### api/memories
+Data retrieval and functionality for all memories related to an individual user.
+
+#### api/memories/:memory_id
+Data retrieval and functionality for a single memory related to an individual user.
+
+#### api/family-members
+Data retrieval and functionality for all family members associated with an individual user.
+
+#### api/family-members/:familymember_id
+Data retrieval and functionality for a single family member related to an individual user.
+
+## Built With
+* Frontend - React and React-Router
+* Backend - Node and Express
+* Data persistence - PostgreSQL, SQL / Knex
+* Testing - Chai, Mocha, Jest, Supertest, Enzyme, Postgrator, Faker
+* Hosted - Zeit and Heroku
+* Development Environment - VS Code
