@@ -3,9 +3,10 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const { NODE_ENV } = require('./config');
+const { NODE_ENV,AWS_Access_Key_Id,AWS_Secret_Key,S3_BUCKET } = require('./config');
 const memoriesRouter = require('./memories/memories-router');
 const familyMembersRouter = require('./family-members/family-members-router');
+const AWS = require('aws-sdk');
 
 const app = express();
 const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
@@ -16,6 +17,30 @@ app.use(helmet());
 
 app.get('/', (req,res) => {
   res.send('Hello, Ms. World!')
+});
+
+AWS.config.region = 'us-east-2';
+
+app.get('/sign-s3', (req, res) => {
+  const s3 = new AWS.S3();
+  const { fileName, fileType } = req.query;
+  const s3Params = {
+    Bucket: S3_BUCKET,
+    Key: fileName,
+    ContentType: fileType,
+    ACL: 'public-read'
+  };
+
+  s3.getSignedUrl('putObject', s3Params, (err, data) => {
+    if(err){
+      console.error(err);
+    } else {
+      res.json({
+        signedRequest: data,
+        url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+      });
+    }
+  });
 });
 
 app.use('/api/family-members', familyMembersRouter);
