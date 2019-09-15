@@ -19,8 +19,10 @@ app.get('/', (req,res) => {
   res.send('Hello, Ms. World!')
 });
 
+// set the region for the AWS local server
 AWS.config.region = 'us-east-2';
 
+// endpoint takes in the file object sent from the client and creates the signed certificate needed to protect the API_Key and also allow the client to send files to AWS and store them in an S3 Bucket
 app.get('/sign-s3', (req, res) => {
   const s3 = new AWS.S3();
   const { fileName, fileType } = req.query;
@@ -31,6 +33,7 @@ app.get('/sign-s3', (req, res) => {
     ACL: 'public-read'
   };
 
+//retrieves the signed certificate from AWS
   s3.getSignedUrl('putObject', s3Params, (err, data) => {
     if(err){
       console.error(err);

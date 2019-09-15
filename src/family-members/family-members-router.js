@@ -3,15 +3,16 @@ const express = require('express');
 const xss = require('xss');
 const FamilyMembersJson = express.json();
 const FamilyMembersRouter = express.Router();
-// const logger = require('../logger');
 const FamilyMembersService = require('./family-members.service')
 
+// helper functiont that creates an object of a family member to store in the DB and also prevents cross site scripting.
 const serializeFamilyMember =  familymember => ({
   id: familymember.id,
   first_name: xss(familymember.first_name),
   last_name: xss(familymember.last_name),
 })
 
+// GET request for all family members and POST for adding a new family member
 FamilyMembersRouter
   .route('/')
   .get((req, res, next) => {
@@ -28,7 +29,6 @@ FamilyMembersRouter
 
     for (const [key, value] of Object.entries(newFamilyMember)) {
       if (value == null) {
-        // logger.error(`First and last name are required.`)
         return res.status(400).json({
           error: { message: `Missing '${key}' in request body` }
         });
@@ -55,7 +55,6 @@ FamilyMembersRouter
     )
       .then(familymember => {
         if (!familymember) {
-          // logger.error(`Family Member with id ${familymember_id} not found.`)
           return res.status(404).json({
             error: { message: `Family member does not exist`}
           })
@@ -68,6 +67,7 @@ FamilyMembersRouter
   .get((req, res) => {
     res.json(serializeFamilyMember(res.familymember))
   })
+  // TODO: need to still implement this delete functionality on the client
   .delete((req, res, next) => {
     const { familymember_id } = req.params
     FamilyMembersService.deleteFamilyMembers(
@@ -75,11 +75,12 @@ FamilyMembersRouter
       familymember_id
     )
       .then(() => {
-        // logger.info(`Family member with id ${familymember_id} deleted.`)
         res.status(204).end()
       })
       .catch(next)
   })
+
+  // TODO: still need to implement this update function on the front end.
   .patch(FamilyMembersJson, (req, res, next) => {
     const { first_name, last_name } = req.body;
     const familymemberToUpdate = { first_name, last_name }

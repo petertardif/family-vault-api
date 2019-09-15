@@ -5,6 +5,7 @@ const MemoriesJson = express.json();
 const MemoriesRouter = express.Router();
 const MemoriesService = require('./memories-service');
 
+// creates a helper function to create an object of the member and prevents cross site scripting.
 const serializeMemory = memory => ({
   id: memory.id,
   memory_title: xss(memory.memory_title),
@@ -15,6 +16,7 @@ const serializeMemory = memory => ({
   date_updated: memory.date_updated
 })
 
+// GET request to pull back all memories and POST request to add a new memory
 MemoriesRouter
   .route('/')
   .get((req, res, next) => {
@@ -31,7 +33,6 @@ MemoriesRouter
 
     for (const [key, value] of Object.entries(newMemory)) {
       if (value == null) {
-        // logger.error(`Title and Content are required.`)
         return res.status(400).json({
           error: { message: `Missing '${key}' in request body` }
         });
@@ -48,6 +49,7 @@ MemoriesRouter
       .catch(next)
   })
 
+// Individual memory requests
 MemoriesRouter
   .route('/:memory_id')
   .all((req, res, next) => {
@@ -58,7 +60,6 @@ MemoriesRouter
     )
       .then(memory => {
         if (!memory) {
-          // logger.error(`Memory with id ${memory_id} not found.`)
           return res.status(404).json({
             error: { message: `Memory does not exist`}
           })
@@ -78,11 +79,12 @@ MemoriesRouter
       memory_id
     )
       .then(() => {
-        // logger.info(`Memory with id ${memory_id} deleted.`)
         res.status(204).end()
       })
       .catch(next)
   })
+
+  // TODO: still need to implement this CRUD Operation for updating
   .patch(MemoriesJson, (req, res, next) => {
     const { memory_title, memory_date, memory_desc, media_url, familymember_id } = req.body;
     const memoryToUpdate = { memory_title, memory_date, memory_desc, media_url, familymember_id }
